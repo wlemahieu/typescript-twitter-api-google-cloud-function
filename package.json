@@ -1,0 +1,32 @@
+{
+  "name": "typescript-twitter-api-google-cloud-function",
+  "version": "1.0.0",
+  "description": "An example of a Google Cloud Function that uses Twitter API SDK to manage tweets.",
+  "main": "index.js",
+  "author": "Wesley LeMahieu",
+  "license": "MIT",
+  "dependencies": {
+    "@google-cloud/functions-framework": "^3.1.2",
+    "twitter-api-sdk": "^1.0.9"
+  },
+  "scripts": {
+    "start": "functions-framework --source=build/src/ --target=run",
+    "watch": "concurrently \"tsc -w\" \"nodemon --watch ./build/ --exec npm run start\"",
+    "lint": "gts lint",
+    "clean": "gts clean",
+    "compile": "tsc",
+    "fix": "gts fix",
+    "prepare": "npm run compile",
+    "pretest": "npm run compile",
+    "posttest": "npm run lint"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.13",
+    "@types/node": "^14.11.2",
+    "@types/node-fetch": "^2.6.2",
+    "concurrently": "^7.2.2",
+    "gts": "^3.1.0",
+    "nodemon": "^2.0.18",
+    "typescript": "^4.0.3"
+  }
+}
