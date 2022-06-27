@@ -7,7 +7,7 @@
   "license": "MIT",
   "dependencies": {
     "@google-cloud/functions-framework": "^3.1.2",
-    "twitter-api-sdk": "^1.0.9"
+    "axios": "^0.27.2"
   },
   "scripts": {
     "start": "functions-framework --source=build/src/ --target=run",
