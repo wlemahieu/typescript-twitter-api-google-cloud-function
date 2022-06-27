@@ -26,6 +26,7 @@ const getTweets = async (
     },
   });
 
+  console.log(results?.data);
   const data: any = results?.data?.data || [];
   tweets = [...tweets, ...data];
 
@@ -38,18 +39,13 @@ const getTweets = async (
   return tweets;
 };
 
-export const run: HttpFunction = async (_req, res) => {
+export const run: HttpFunction = async (req, res) => {
+  console.log('Connecting to Twitter API...');
+
   // allow our local apps to interact with this gcf. (affects local only)
   res.set('Access-Control-Allow-Origin', '*');
 
-  console.log('Connecting to Twitter API...');
-
-  // get the 20th ever tweet!
-  /*
-  console.log('Fetching an old tweet by Jack...');
-  const tweet = await client.tweets.findTweetById('20');
-  console.log(tweet?.data?.text);
-  */
+  const {rowsPerPage} = req.query;
 
   try {
     console.log('Fetching all my tweets...');
@@ -66,7 +62,10 @@ export const run: HttpFunction = async (_req, res) => {
 
     if (myUserId) {
       // const likes = await client.tweets.usersIdLikedTweets(myUser.data.id);
-      const tweets = await getTweets(myUserId, 100);
+      const tweets = await getTweets(
+        myUserId,
+        parseInt((rowsPerPage as string) || '100', 0)
+      );
       res.send({
         // likes: likes?.data,
         tweets,
