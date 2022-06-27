@@ -14,29 +14,22 @@ const getTweets = async (
   perPage: number,
   nextToken?: string
 ) => {
-  let tweets: Array<any> = [];
   let url = `https://api.twitter.com/2/users/${myUserId}/tweets?tweet.fields=entities&max_results=${perPage}`;
-  if (nextToken) {
+  if (nextToken?.length) {
     url = `${url}&pagination_token=${nextToken}`;
   }
-  console.log(url);
+
   const results = await axios.get(url, {
     headers: {
       Authorization: `Bearer ${process.env.TWITTER_BEARER_TOKEN}`,
     },
   });
 
-  console.log(results?.data);
-  const data: any = results?.data?.data || [];
-  tweets = [...tweets, ...data];
+  // collect tweets
+  const tweets = results?.data?.data;
+  const newNextToken = results?.data?.meta?.next_token;
 
-  /*
-  if (results?.meta?.next_token?.length) {
-    console.log('Getting more tweets!');
-    await getTweets(client, myUserId, perPage, results.meta?.next_token);
-  }
-  */
-  return tweets;
+  return {newNextToken, tweets};
 };
 
 export const run: HttpFunction = async (req, res) => {
@@ -45,8 +38,9 @@ export const run: HttpFunction = async (req, res) => {
   // allow our local apps to interact with this gcf. (affects local only)
   res.set('Access-Control-Allow-Origin', '*');
 
-  const {rowsPerPage} = req.query;
+  const {nextToken, rowsPerPage} = req.query;
 
+  console.log({nextToken, rowsPerPage});
   try {
     console.log('Fetching all my tweets...');
     const myUser = await axios.get(
@@ -62,12 +56,14 @@ export const run: HttpFunction = async (req, res) => {
 
     if (myUserId) {
       // const likes = await client.tweets.usersIdLikedTweets(myUser.data.id);
-      const tweets = await getTweets(
+      const {newNextToken, tweets} = await getTweets(
         myUserId,
-        parseInt((rowsPerPage as string) || '100', 0)
+        parseInt((rowsPerPage as string) || '100', 0),
+        (nextToken as string) || ''
       );
       res.send({
         // likes: likes?.data,
+        nextToken: newNextToken,
         tweets,
       });
     } else {
