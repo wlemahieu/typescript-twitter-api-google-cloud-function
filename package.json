@@ -7,7 +7,9 @@
   "license": "MIT",
   "dependencies": {
     "@google-cloud/functions-framework": "^3.1.2",
-    "axios": "^1.1.0"
+    "@types/sentiment": "^5.0.1",
+    "axios": "^1.1.0",
+    "sentiment": "^5.0.2"
   },
   "scripts": {
     "start": "functions-framework --source=build/src/ --target=run --port=8088",

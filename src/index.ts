@@ -11,6 +11,7 @@
 import type {HttpFunction} from '@google-cloud/functions-framework/build/src/functions';
 import getUser from './api/getUser';
 import getTweets from './api/getTweets';
+import calculateSentiment from './helpers/calculateSentiment';
 
 const twitterUsername = 'wesleylemahieu';
 
@@ -39,6 +40,10 @@ export const run: HttpFunction = async (req, res) => {
   res.send({
     // likes: likes?.data,
     nextToken: newNextToken,
-    tweets,
+    tweets: tweets.map(tweet => ({
+      ...tweet,
+      sentiment: calculateSentiment(tweet.text),
+    })),
+    twitterUsername,
   });
 };
